@@ -10,7 +10,8 @@
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "build:vercel": "vite build --config vite.vercel.config.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
