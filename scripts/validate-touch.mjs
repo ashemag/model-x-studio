@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {PointerTap} from '../app/pointer-tap.ts';
+const tap=new PointerTap();
+tap.down(1,10,10,10);assert.equal(tap.up(1,14,14),true,'Finger jitter remains a tap');
+tap.down(1,10,10,10);tap.move(1,80,10);assert.equal(tap.up(1,10,10),false,'Dragging back to the start does not select');
+tap.down(1,10,10,10);tap.down(2,40,40,10);assert.equal(tap.up(2,40,40),false);assert.equal(tap.up(1,10,10),false,'Neither end of a pinch selects a piece');
+tap.down(1,10,10,10);tap.cancel(1);assert.equal(tap.up(1,10,10),false,'Canceled gestures do not select');
+tap.down(1,10,10,10);assert.equal(tap.up(1,10,10),true,'A fresh tap works after cancellation');
+tap.down(1,10,10,5);assert.equal(tap.up(1,16,10),false,'Mouse movement keeps its smaller threshold');
+console.log('Touch checks passed: taps, drag-return, pinch, cancellation, recovery, and mouse threshold.');
