@@ -76,7 +76,7 @@ const VehicleScene=forwardRef<SceneHandle,Props>(function VehicleScene(props,ref
   let raf=0;let amount=latest.current.explode/100;const vector=new THREE.Vector3();const clock=new THREE.Clock();let last=clock.getElapsedTime();
   let focusKey='';
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function frame(){raf=requestAnimationFrame(frame);const now=clock.getElapsedTime(),dt=Math.min(now-last,.1);last=now;const p=latest.current;amount=THREE.MathUtils.damp(amount,p.explode/100,5,dt);controls.autoRotate=p.autoRotate&&!reduced;controls.update();
+  function frame(){raf=requestAnimationFrame(frame);const now=clock.getElapsedTime(),dt=Math.min(now-last,.1);last=now;const p=latest.current;amount=THREE.MathUtils.damp(amount,p.explode/100,5,dt);ground.position.y=-.08-.85*amount;grid.position.y=ground.position.y-.005;controls.autoRotate=p.autoRotate&&!reduced;controls.update();
    parts.forEach(({id})=>{const g=groups[id],o=offsets[id];g.position.set(o[0]*amount,o[1]*amount,o[2]*amount);g.visible=!p.isolated||p.selected===id;
     if(['battery','drive','suspension'].includes(id))g.visible=g.visible&&(amount>.08||p.isolated);
    });
