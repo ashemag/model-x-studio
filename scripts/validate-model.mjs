@@ -1,0 +1,13 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+const bytes=fs.readFileSync('public/models/model-x.glb');
+const asset=await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),'');
+const catalog=JSON.parse(fs.readFileSync('public/models/model-x-manifest.json','utf8')).objects;
+const ids=new Set();let meshes=0;asset.scene.updateMatrixWorld(true);
+asset.scene.traverse(o=>{if(o.userData.component)ids.add(o.userData.component);if(o.isMesh){meshes++;assert(o.geometry.attributes.position.count>0);}});
+assert.equal(ids.size,catalog.length);assert(catalog.every(p=>ids.has(p.id)));assert(catalog.every(p=>['body','doors','glass','cabin','wheels'].includes(p.part)));
+const box=new THREE.Box3().setFromObject(asset.scene);const size=box.getSize(new THREE.Vector3());
+assert(size.x>1.9&&size.x<2.4,`Unexpected width ${size.x}`);assert(size.y>1.5&&size.y<1.9,`Unexpected height ${size.y}`);assert(size.z>4.9&&size.z<5.3,`Unexpected length ${size.z}`);
+console.log(JSON.stringify({meshPieces:ids.size,drawMeshes:meshes,size:size.toArray(),bytes:bytes.length,categories:Object.fromEntries(['body','glass','doors','cabin','wheels'].map(id=>[id,catalog.filter(p=>p.part===id).length]))},null,2));
